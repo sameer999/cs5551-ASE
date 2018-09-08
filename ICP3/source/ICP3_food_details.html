@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mashup Application</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.1/angular.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script>
+
+    angular.module('mashup', [])
+        .controller('mashupcontrol', function($scope, $http) {
+
+            $scope.caloriescount = function(){
+
+                $http.get('https://api.nutritionix.com/v1_1/search/' +$scope.item1 +'?results=0:1&fields=*&appId=892b1082&appKey=72a6c6e13cb1a2b801d4c351491ea944')
+                    .success(function (output) {
+                        console.log(output);
+                        cal = output.hits[0].fields.nf_calories;
+                        weight = output.hits[0].fields.nf_water_grams;
+                        $scope.calorie = cal;
+			if(weight == null){
+				weight=0;
+			}
+                        $scope.weight1 = weight;
+                   })
+            };
+            $scope.getsound = function() {
+                var nutritionDtlsURL = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?username=4a39d88a-32f7-4a1c-8ab3-528aeee18106&password=bA8M8lMWwclh&text=' +$scope.item1 +'';
+                console.log(nutritionDtlsURL);
+		var audio = new Audio(nutritionDtlsURL);
+                audio.play();
+            };
+
+        });
+</script>
+</head>
+
+<body >
+<div class="jumbotron ">
+    <div class="container"><h2> Mashup application</h2></div>
+</div>
+<div ng-app="mashup" ng-controller="mashupcontrol" class="container">
+    <div class="row ">
+        <form >
+                <div class="col-sm-3"><input type="text"  class="form-control" id="item1"
+                                             ng-model="item1" placeholder="Enter item "></div>
+
+                <div class="col-sm-2"><input  href="#cc" type="button" class="btn btn-primary" data-toggle="collapse"
+                                             ng-click="caloriescount();getsound()" value="Find"></div>
+        </form>
+    </div>
+    <br/>
+    <br/>
+<div id="cc" class="collapse">
+<div class="row">
+    <div  class="well col-sm-4"  >
+        <p><i>calories </i> <h4>{{calorie}} </h4> </p>
+    </div>
+</div>
+<div class="row">
+    <div class="well col-sm-4" > <p>  <i> weight in gm </i> <h4> {{weight1}}</h4></p> </div>
+</div>
+</div>
+</div>
+</body>
+</html>
